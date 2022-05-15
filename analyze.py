@@ -1284,6 +1284,21 @@ def get_single_skin_stats(god, skin, role, patch, rank="All Ranks", queue_type="
 
 
 if __name__ == "__main__":
-    print(get_single_skin_stats("Achilles", "Battleworn",
-          "Solo", "9.4", queue_type="Ranked"))
+    mydb = client["single_match_stats"]
+    total_players = {}
+    for god in godsDict:
+        mycol = mydb[god]
+        for x in mycol.aggregate([
+            {
+                "$match": {"patch": "9.4"}
+            },
+            {
+                "$group": {"_id": "$player"}
+            }
+        ]):
+            if x["_id"] not in total_players:
+                total_players[x["_id"]] = "cool"
+        print(god)
+    print("total", len(total_players))
+
     pass
