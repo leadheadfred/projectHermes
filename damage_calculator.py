@@ -206,9 +206,11 @@ def calc_dps_stats(client, god, build, baseAttSpeed):
     itemdb = client["Item_Data"]
     for item in build:
         stat = get_special_item(item)
+        if "Physical Armor Reduction" in stat.keys() and item == "The Executioner":
+            armor_reduction_per = 7 # dont think this is needed as 295 takes exe into account?
         itemcol = itemdb[item]
-        for item_description in itemcol.find({}, {"ItemDescription": 1}): #pls update
-            for stat in item_description["ItemDescription"]["Menuitems"]:
+        for x in itemcol.find({}, {"ItemDescription": 1}): #pls update
+            for stat in x["ItemDescription"]["Menuitems"]:
                 # print(item, stat)
                 if stat["Description"] == "Attack Speed":
                     attSpeedIncease += int(stat["Value"].replace("%",
@@ -246,8 +248,8 @@ def calc_tank_stats(client, god, build):
     itemdb = client["Item_Data"]
     for item in build:
         itemcol = itemdb[item]
-        for item_description in itemcol.find({}, {"ItemDescription": 1}): #pls update x
-            for stat in item_description["ItemDescription"]["Menuitems"]:
+        for x in itemcol.find({}, {"ItemDescription": 1}): #pls update x
+            for stat in x["ItemDescription"]["Menuitems"]:
                 # print(item, stat)
                 if stat["Description"] == "Physical Protection":
                     physProt += int(stat["Value"].replace("+", ""))
@@ -353,7 +355,6 @@ def calc_dps(client, god, build, enemy, enemy_build, enemy_level, level=20):
                 sbow_stacks = round((attSpeed - 2.5) / .02)
             attDamage += 2 * sbow_stacks
             item_dmg_out["Silverbranch Bow"] += 2 * sbow_stacks
-
         if critChance > 0:
             if randint(0, 100) <= critChance:
                 crit += 1
